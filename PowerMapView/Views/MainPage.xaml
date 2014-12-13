@@ -1,0 +1,172 @@
+﻿<Page x:Class="PowerMapView.Views.MainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:i="using:Microsoft.Xaml.Interactivity"
+	  xmlns:local="using:PowerMapView"
+	  xmlns:common="using:PowerMapView.Common"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:viewModels="using:PowerMapView.ViewModels"
+	  xmlns:controls="using:PowerMapView.Views.Controls"
+	  xmlns:behaviors="using:PowerMapView.Views.Behaviors">
+
+	<Page.TopAppBar>
+		<AppBar Background="{StaticResource App.PageHeaderBrush}"
+				BorderBrush="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Background}"
+				IsOpen="True">
+			<Grid>
+				<StackPanel HorizontalAlignment="Left" VerticalAlignment="Center"
+							Orientation="Horizontal">
+					<TextBlock
+						x:Uid="AppTitle"
+						Margin="30,0,0,0" VerticalAlignment="Center" 
+						IsHitTestVisible="false"
+						FontSize="48" FontWeight="Light" LineHeight="30"
+						TextWrapping="NoWrap"
+						Text="Power Map View"/>
+
+					<StackPanel Margin="30,0,0,0"
+								Orientation="Horizontal">
+						<AppBarToggleButton
+							x:Uid="ZoomInButton"
+							Icon="ZoomIn"
+							Label="Zoom In"
+							ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Label}"
+							IsCompact="True"
+							IsChecked="{Binding Path=ZoomDirection, Converter={StaticResource ZoomDirectionModeToBooleanConverterKey}, ConverterParameter=ZoomIn, Mode=TwoWay}"/>
+						<AppBarToggleButton
+							x:Uid="ZoomOutButton"
+							Icon="ZoomOut"
+							Label="Zoom Out"
+							ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Label}"
+							IsCompact="True"
+							IsChecked="{Binding Path=ZoomDirection, Converter={StaticResource ZoomDirectionModeToBooleanConverterKey}, ConverterParameter=ZoomOut, Mode=TwoWay}"/>
+					</StackPanel>
+				</StackPanel>
+			</Grid>
+		</AppBar>
+	</Page.TopAppBar>
+
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.ChildrenTransitions>
+			<TransitionCollection>
+				<EntranceThemeTransition/>
+			</TransitionCollection>
+		</Grid.ChildrenTransitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0"
+			  x:Name="PageHeader">
+			<Border Height="20" VerticalAlignment="Top"
+					Background="{StaticResource App.PageHeaderBrush}"
+					Tapped="PageHeader_Tapped">
+			</Border>
+		</Grid>
+
+		<Grid Grid.Row="1"
+			  x:Name="PageBody"
+			  Background="{StaticResource App.PageBodyBrush}">
+
+			<ScrollViewer
+				x:Name="MainViewer"				
+				ZoomMode="Enabled"
+				MaxZoomFactor="9" MinZoomFactor="1"
+				HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled"
+				HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+				ManipulationMode="TranslateX,TranslateY,Scale">
+
+				<controls:CanvasListView
+					x:Name="MainCanvas"
+					Width="{Binding ActualWidth, ElementName=MainViewer, Mode=OneWay}"
+					Height="{Binding ActualHeight, ElementName=MainViewer, Mode=OneWay}"
+					CanDragItems="False"
+					ItemsSource="{Binding Path=SiteCollection}">
+					<ListView.ItemsPanel>
+						<ItemsPanelTemplate>
+							<Canvas/>
+						</ItemsPanelTemplate>
+					</ListView.ItemsPanel>
+
+					<ListView.ItemContainerStyle>
+						<Style TargetType="ListViewItem">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="ContentControl">
+										<Border>
+											<ContentPresenter/>
+										</Border>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ListView.ItemContainerStyle>
+
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<controls:CanvasItemGrid IsLoaded="{Binding IsLoaded, Mode=TwoWay}">
+								<controls:CircularProgressBar
+									Radius="9"
+									StrokeThickness="2"
+									ArcSegmentColor="DarkViolet"
+									Percentage="{Binding PowerCompany.UsagePercentage}"/>
+
+								<Ellipse Width="14" Height="14"
+										 Fill="SkyBlue"
+										 ToolTipService.ToolTip="{Binding Name}"
+										 Tapped="CanvasItem_Tapped">
+
+									<FlyoutBase.AttachedFlyout>
+										<Flyout Placement="Bottom">
+											<Flyout.FlyoutPresenterStyle>
+												<Style TargetType="FlyoutPresenter">
+													<Setter Property="Background" Value="Black"/>
+													<Setter Property="BorderBrush" Value="Gray"/>
+													<Setter Property="BorderThickness" Value="1"/>
+													<Setter Property="Padding" Value="2"/>
+												</Style>
+											</Flyout.FlyoutPresenterStyle>
+
+											<StackPanel>
+												<TextBlock Margin="8,4"
+														   Foreground="White" FontSize="28"
+														   Text="{Binding Name}"/>
+												<Grid Background="White">
+													<TextBlock Margin="4"
+															   Foreground="Black" FontSize="20"
+															   Text="{Binding Description}"/>
+												</Grid>
+											</StackPanel>
+										</Flyout>
+									</FlyoutBase.AttachedFlyout>
+								</Ellipse>
+
+								<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+										   IsHitTestVisible="False"
+										   Foreground="White" FontSize="8"
+										   Text="{Binding TempCelsius}"/>
+
+								<i:Interaction.Behaviors>
+									<behaviors:FrameworkElementCenterBehavior/>
+								</i:Interaction.Behaviors>
+							</controls:CanvasItemGrid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</controls:CanvasListView>
+
+				<i:Interaction.Behaviors>
+					<behaviors:ScrollViewerSelectorBehavior
+						ViewerSize="{Binding MainViewerSize, Mode=TwoWay}"
+						ViewerZoomFactor="{Binding MainViewerZoomFactor, Mode=TwoWay}"
+						InSelectorCenterPosition="{Binding MainCanvasCenterPosition, Mode=TwoWay}"
+						IsViewerInitiating="{Binding IsMainViewerInitiating, Mode=OneWay}"
+						ZoomDirection="{Binding ZoomDirection, Mode=OneWay}"/>
+				</i:Interaction.Behaviors>
+			</ScrollViewer>
+		</Grid>
+	</Grid>
+</Page>
