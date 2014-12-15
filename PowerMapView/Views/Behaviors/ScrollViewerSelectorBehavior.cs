@@ -101,7 +101,7 @@ namespace PowerMapView.Views.Behaviors
 				"ViewerSize",
 				typeof(Size),
 				typeof(ScrollViewerSelectorBehavior),
-				new PropertyMetadata(Size.Empty));
+				new PropertyMetadata(default(Size)));
 
 		public float ViewerZoomFactor
 		{

@@ -237,7 +237,7 @@ namespace PowerMapView.ViewModels
 
 		internal void CheckAreaCoordinates(IEnumerable<Site> sites, Size viewerSize)
 		{
-			if (viewerSize == Size.Empty)
+			if (viewerSize == default(Size))
 				return;
 			
 			double left = 180D; // Starting value is the greatest in longitude (East longitude, International Date Line).
