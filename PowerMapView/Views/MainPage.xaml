@@ -73,7 +73,7 @@
 			  Background="{StaticResource App.PageBodyBrush}">
 
 			<ScrollViewer
-				x:Name="MainViewer"				
+				x:Name="MainViewer"
 				ZoomMode="Enabled"
 				MaxZoomFactor="9" MinZoomFactor="1"
 				HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled"

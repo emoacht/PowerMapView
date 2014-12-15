@@ -61,14 +61,6 @@ namespace PowerMapView.Views.Behaviors
 		{
 			ViewerSize = new Size(AssociatedViewer.ActualWidth, AssociatedViewer.ActualHeight);
 
-			// SizeChanged event
-			disposer.Add(
-				Observable.FromEvent<SizeChangedEventHandler, SizeChangedEventArgs>(
-					h => (sender_, e_) => h(e_),
-					h => AssociatedViewer.SizeChanged += h,
-					h => AssociatedViewer.SizeChanged -= h)
-				.Subscribe(e_ => RestoreInViewerCenterPosition()));
-
 			// ViewChanged event
 			disposer.Add(
 				Observable.FromEventPattern<ScrollViewerViewChangedEventArgs>(
@@ -77,6 +69,14 @@ namespace PowerMapView.Views.Behaviors
 				.Throttle(TimeSpan.FromMilliseconds(100)) // 100 msec throttling
 				.ObserveOn(SynchronizationContext.Current)
 				.Subscribe(e_ => SaveInViewerCenterPosition()));
+
+			// SizeChanged event
+			disposer.Add(
+				Observable.FromEvent<SizeChangedEventHandler, SizeChangedEventArgs>(
+					h => (sender_, e_) => h(e_),
+					h => AssociatedViewer.SizeChanged += h,
+					h => AssociatedViewer.SizeChanged -= h)
+				.Subscribe(e_ => RestoreInViewerCenterPosition()));
 
 			// Tapped event
 			StartListenTap();
@@ -417,7 +417,7 @@ namespace PowerMapView.Views.Behaviors
 		}
 
 		private double startHorizontalOffsetPosition;
-		private double startverticalOffsetPosition;
+		private double startVerticalOffsetPosition;
 
 		private void OnPointerPressed(PointerRoutedEventArgs e)
 		{
@@ -427,7 +427,7 @@ namespace PowerMapView.Views.Behaviors
 			var startPosition = e.GetCurrentPoint(AssociatedViewer).Position;
 
 			startHorizontalOffsetPosition = AssociatedViewer.HorizontalOffset + startPosition.X;
-			startverticalOffsetPosition = AssociatedViewer.VerticalOffset + startPosition.Y;
+			startVerticalOffsetPosition = AssociatedViewer.VerticalOffset + startPosition.Y;
 		}
 
 		private void OnPointerUnpressed(PointerRoutedEventArgs e)
@@ -443,7 +443,7 @@ namespace PowerMapView.Views.Behaviors
 			var position = e.GetCurrentPoint(AssociatedViewer).Position;
 
 			var offsetX = startHorizontalOffsetPosition - position.X;
-			var offsetY = startverticalOffsetPosition - position.Y;
+			var offsetY = startVerticalOffsetPosition - position.Y;
 
 			AssociatedViewer.ChangeView(offsetX, offsetY, null);
 		}
