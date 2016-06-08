@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+using PowerMapView.Helper;
+
 namespace PowerMapView.ViewModels
 {
 	public class PowerCompanyViewModel : ViewModelBase
@@ -15,15 +17,15 @@ namespace PowerMapView.ViewModels
 			get { return _companyCollection ?? (_companyCollection = new List<PowerCompanyViewModel>()); }
 		}
 		private static List<PowerCompanyViewModel> _companyCollection;
-
-
+	
+	
 		private readonly int companyIndex;
 
 		public PowerCompanyViewModel(int index)
 		{
 			this.companyIndex = index;
 		}
-
+		
 
 		#region Data
 
@@ -83,7 +85,7 @@ namespace PowerMapView.ViewModels
 		/// <summary>
 		/// Data time of latest usage amount
 		/// </summary>
-		public DateTime DataTime
+		public DateTimeOffset DataTime
 		{
 			get { return _dataTime; }
 			set
@@ -92,11 +94,11 @@ namespace PowerMapView.ViewModels
 				RaisePropertyChanged();
 			}
 		}
-		private DateTime _dataTime;
+		private DateTimeOffset _dataTime;
 
 		#endregion
-
-
+		
+	
 		#region Update
 
 		/// <summary>
@@ -119,7 +121,7 @@ namespace PowerMapView.ViewModels
 		/// <summary>
 		/// Starting part of header row of actual usage rows (This must be searched from last)
 		/// </summary>
-		private const string ActualUsageHeaderStart = "DATE,TIME,";
+		private const string ActualUsageHeaderStart = "DATE,TIME,当日実績";
 
 		/// <summary>
 		/// Last update time (Not UPDATE time in csv file)
@@ -162,29 +164,25 @@ namespace PowerMapView.ViewModels
 
 		public async Task UpdateAsync()
 		{
-			var targetUrl = PowerCompany.Companies[companyIndex].Url.Replace("[yyyyMMdd]", DateTime.Now.ToString("yyyyMMdd"));
+			var targetUrl = PowerCompany.Companies[companyIndex].Url.Replace("[yyyyMMdd]", DateTimeOffset.Now.ToJst().ToString("yyyyMMdd"));
 			var csv = await DataAccess.GetPowerDataAsync(targetUrl);
 
 			UpdateTimeLast = DateTime.Now;
 
-			if (String.IsNullOrEmpty(csv))
+			if (string.IsNullOrEmpty(csv))
 			{
 				failureCount++;
 				return;
 			}
 			failureCount = 0;
 
-			var responseRows = csv.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
+			var records = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+			
 			if ((PeakSupplyHeaderIndex < 0) ||
 				(ActualUsageHeaderIndex < 0))
 			{
-				var responseRowList = responseRows.Take(responseRows.Length - 1).ToList();
-
-				var peakSupplyHeaderIndex = responseRowList
-					.FindIndex(x => x.StartsWith(PeakSupplyHeaderStart));
-				var actualUsageHeaderIndex = responseRowList
-					.FindLastIndex(x => x.StartsWith(ActualUsageHeaderStart)); // Search from last
+				var peakSupplyHeaderIndex = records.FindIndex(x => x.StartsWith(PeakSupplyHeaderStart));
+				var actualUsageHeaderIndex = records.FindLastIndex(x => x.StartsWith(ActualUsageHeaderStart)); // Search from last
 
 				if ((peakSupplyHeaderIndex < 0) || (actualUsageHeaderIndex < 0))
 					return;
@@ -194,54 +192,51 @@ namespace PowerMapView.ViewModels
 			}
 
 			// Find peak supply.
-			var supplyRowFields = responseRows[PeakSupplyHeaderIndex + 1].Split(',');
-			if (supplyRowFields.Any())
+			var supplyFields = records[PeakSupplyHeaderIndex + 1].Split(',');
+			if (supplyFields.Length > 0)
 			{
-				double numBuff;
-				if (double.TryParse(supplyRowFields[0], out numBuff))
-					PeakSupply = Math.Round(numBuff);
+				double supplyBuff;
+				if (double.TryParse(supplyFields[0], out supplyBuff))
+					PeakSupply = Math.Round(supplyBuff);
 			}
 
 			// Find usage amount and data time.
 			nodataCount++;
-			var currentDate = DateTime.Now.ToString("yyyy/M/d");
-			var rowIndex = ActualUsageHeaderIndex;			
+			var currentDate = DateTimeOffset.Now.ToJst().Date;
 
-			do
+			foreach (var usageRecord in records.Skip(ActualUsageHeaderIndex + 1))
 			{
-				rowIndex++;
-
-				var usageRow = responseRows[rowIndex];
-				if (String.IsNullOrWhiteSpace(usageRow))
+				if (string.IsNullOrWhiteSpace(usageRecord))
 					break;
 
-				var usageRowFields = usageRow.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				if (usageRowFields.Length < 3)
+				var usageFields = usageRecord.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+				if (usageFields.Length < 3)
 					break;
 
-				// Check if data date is today.
-				if (usageRowFields[0] != currentDate)
-					break;
+				// Find data time.
+				DateTimeOffset dataTimeBuff;
+				if (DateTimeOffset.TryParse(string.Format("{0} {1}", usageFields[0], usageFields[1]), out dataTimeBuff))
+				{
+					dataTimeBuff = dataTimeBuff.ToJst();
+
+					// Check if data date is today.
+					if (dataTimeBuff.Date != currentDate)
+						break;
+
+					DataTime = dataTimeBuff;
+				}
 
 				// Find usage amount.
-				double numBuff;
-				if (double.TryParse(usageRowFields[2], out numBuff))
+				double usageBuff;
+				if (double.TryParse(usageFields[2], out usageBuff))
 				{
-					if (numBuff <= 0)
+					if (usageBuff <= 0)
 						break;
 
 					nodataCount = 0;
-					UsageAmount = Math.Round(numBuff);					
-				}
-
-				// Find data time.
-				DateTime timeBuff;
-				if (DateTime.TryParse(String.Format("{0} {1}", usageRowFields[0], usageRowFields[1]), out timeBuff))
-				{
-					DataTime = timeBuff;
+					UsageAmount = usageBuff;
 				}
 			}
-			while (rowIndex <= responseRows.Length - 2);
 
 			Debug.WriteLine("{0}: {1}, {2}, {3:f1}", Name, PeakSupply, UsageAmount, UsagePercentage);
 		}
