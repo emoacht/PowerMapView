@@ -83,7 +83,7 @@ namespace PowerMapView.Models.Power
 				new PowerCompany()
 				{
 					Name = "東北電力",
-					Url = @"http://setsuden.tohoku-epco.co.jp/common/demand/juyo_tohoku.csv",
+					Url = @"http://setsuden.tohoku-epco.co.jp/common/demand/juyo_02_[yyyyMMdd].csv", // Date part must be replaced with current date.
 					Interval = 5,
 					Longitude = 140.878367,
 					Latitude = 38.265633,
@@ -99,8 +99,8 @@ namespace PowerMapView.Models.Power
 				new PowerCompany()
 				{
 					Name = "北陸電力",
-					Url = @"http://www.rikuden.co.jp/denki-yoho/csv/juyo-rikuden.csv",
-					Interval = 10, // No service in weekend.
+					Url = @"http://www.rikuden.co.jp/denki-yoho/csv/juyo_05_[yyyyMMdd].csv", // Date part must be replaced with current date.
+					Interval = 5,
 					Longitude = 137.215333,
 					Latitude = 36.702751,
 				},
@@ -108,7 +108,7 @@ namespace PowerMapView.Models.Power
 				{
 					Name = "中部電力",
 					Url = @"http://denki-yoho.chuden.jp/denki_yoho_content_data/juyo_cepco003.csv",
-					Interval = 3, // Interval of UPDATE time in csv file is 3 while interval of data time is 6.
+					Interval = 5,
 					Longitude = 136.913677,
 					Latitude = 35.169967,
 				},
@@ -123,26 +123,34 @@ namespace PowerMapView.Models.Power
 				new PowerCompany()
 				{
 					Name = "中国電力",
-					Url = @"http://www.energia.co.jp/jukyuu/sys/juyo-j.csv",
-					Interval = 10, // No data update in weekend.
+					Url = @"http://www.energia.co.jp/jukyuu/sys/juyo_07_[yyyyMMdd].csv", // Date part must be replaced with current date.
+					Interval = 5,
 					Longitude = 132.455922,
 					Latitude = 34.387803,
 				},
 				new PowerCompany()
 				{
 					Name = "四国電力",
-					Url = @"http://www.yonden.co.jp/denkiyoho/juyo_yonden.csv",
-					Interval = 6, // No service in weekend.
+					Url = @"http://www.yonden.co.jp/denkiyoho/juyo_shikoku.csv",
+					Interval = 5,
 					Longitude = 134.050183,
 					Latitude = 34.347726,
 				},
 				new PowerCompany()
 				{
 					Name = "九州電力",
-					Url = @"http://www.kyuden.co.jp/power_usages/csv/electric_power_usage[yyyyMMdd].csv", // Date part must be replaced with current date.
+					Url = @"http://www.kyuden.co.jp/power_usages/csv/juyo-hourly-[yyyyMMdd].csv", // Date part must be replaced with current date.
 					Interval = 5,
 					Longitude = 130.404586,
 					Latitude = 33.583509,
+				},
+				new PowerCompany()
+				{
+					Name = "沖縄電力",
+					Url = @"http://www.okiden.co.jp/denki/juyo_10_[yyyyMMdd].csv", // Date part must be replaced with current date.
+					Interval = 5,
+					Longitude = 127.716202,
+					Latitude = 26.270959,
 				}
 			};
 
