@@ -117,7 +117,9 @@ namespace PowerMapView.ViewModels
 			foreach (var ids in idsByPowerCompany)
 			{
 				var dataByPowerCompany = await DataAccess.GetWeatherDataAsync(ids);
-				
+				if (dataByPowerCompany == null)
+					continue;
+
 				foreach (var data in dataByPowerCompany)
 				{
 					var matchingSite = SiteCollection.FirstOrDefault(x => x.Id == data.CityId);
@@ -239,7 +241,7 @@ namespace PowerMapView.ViewModels
 		{
 			if (viewerSize == default(Size))
 				return;
-			
+
 			double left = 180D; // Starting value is the greatest in longitude (East longitude, International Date Line).
 			double right = 0D;
 			double top = 0D;
