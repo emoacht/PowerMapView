@@ -78,7 +78,6 @@ namespace PowerMapView.ViewModels
 			IsMainViewerInitiating = false;
 		}
 
-
 		#region Site
 
 		private readonly DispatcherTimer SiteUpdateTimer = new DispatcherTimer();
@@ -134,7 +133,6 @@ namespace PowerMapView.ViewModels
 
 		#endregion
 
-
 		#region Company
 
 		private readonly DispatcherTimer CompanyUpdateTimer = new DispatcherTimer();
@@ -168,7 +166,6 @@ namespace PowerMapView.ViewModels
 		}
 
 		#endregion
-
 
 		#region Viewer
 
@@ -227,7 +224,6 @@ namespace PowerMapView.ViewModels
 		private ZoomDirectionMode _zoomDirection;
 
 		#endregion
-
 
 		#region Conversion
 
@@ -317,7 +313,6 @@ namespace PowerMapView.ViewModels
 		}
 
 		#endregion
-
 
 		#region Internet Connection
 

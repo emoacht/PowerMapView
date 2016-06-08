@@ -32,7 +32,7 @@ namespace PowerMapView.Common
 			var propertyInfo = memberExpression.Member as PropertyInfo;
 			if (propertyInfo == null)
 				throw new ArgumentException("The MemberExpression is not PropertyInfo.");
-			
+
 			var propertyName = memberExpression.Member.Name;
 			this.RaisePropertyChanged(propertyName);
 		}

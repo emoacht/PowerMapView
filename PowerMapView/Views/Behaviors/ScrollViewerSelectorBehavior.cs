@@ -88,9 +88,8 @@ namespace PowerMapView.Views.Behaviors
 			//StartListenPointer();
 		}
 
-
 		#region Common
-		
+
 		public Size ViewerSize
 		{
 			get { return (Size)GetValue(ViewerSizeProperty); }
@@ -214,7 +213,6 @@ namespace PowerMapView.Views.Behaviors
 
 		#endregion
 
-
 		#region Zoom(Tap)
 
 		public ZoomDirectionMode ZoomDirection
@@ -286,7 +284,6 @@ namespace PowerMapView.Views.Behaviors
 		}
 
 		#endregion
-
 
 		#region Move/Zoom(Manipulation)
 
@@ -375,7 +372,6 @@ namespace PowerMapView.Views.Behaviors
 		}
 
 		#endregion
-
 
 		#region Move(Pointer)
 

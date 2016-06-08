@@ -68,7 +68,6 @@ namespace PowerMapView.Views
 			}
 		}
 
-
 		#region NavigationHelper
 
 		private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)

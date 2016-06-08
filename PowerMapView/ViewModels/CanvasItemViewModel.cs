@@ -36,7 +36,7 @@ namespace PowerMapView.ViewModels
 			}
 		}
 		private int _zIndex = 0;
-		
+
 		public Point Location
 		{
 			get { return new Point(Left, Top); }

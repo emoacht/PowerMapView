@@ -17,8 +17,7 @@ namespace PowerMapView.ViewModels
 			get { return _companyCollection ?? (_companyCollection = new List<PowerCompanyViewModel>()); }
 		}
 		private static List<PowerCompanyViewModel> _companyCollection;
-	
-	
+		
 		private readonly int companyIndex;
 
 		public PowerCompanyViewModel(int index)
@@ -26,7 +25,6 @@ namespace PowerMapView.ViewModels
 			this.companyIndex = index;
 		}
 		
-
 		#region Data
 
 		/// <summary>
@@ -98,7 +96,6 @@ namespace PowerMapView.ViewModels
 
 		#endregion
 		
-	
 		#region Update
 
 		/// <summary>

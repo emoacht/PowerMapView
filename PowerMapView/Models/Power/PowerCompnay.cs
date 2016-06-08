@@ -15,7 +15,6 @@ namespace PowerMapView.Models.Power
 		}
 		private static PowerCompany[] _companies;
 
-
 		#region Data
 
 		/// <summary>
@@ -49,7 +48,6 @@ namespace PowerMapView.Models.Power
 		public double Latitude { get; set; }
 
 		#endregion
-
 
 		#region Load/Save
 

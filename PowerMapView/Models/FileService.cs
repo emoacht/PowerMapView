@@ -50,7 +50,7 @@ namespace PowerMapView.Models
 				var serializer = new DataContractJsonSerializer(typeof(T));
 				return (T)serializer.ReadObject(stream);
 			}
-		}		
+		}
 
 		public static async Task SaveToLocalAsync<T>(string fileName, T source)
 		{

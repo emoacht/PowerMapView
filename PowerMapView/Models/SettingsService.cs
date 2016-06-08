@@ -26,7 +26,6 @@ namespace PowerMapView.Models
 
 		#endregion
 
-
 		#region Method (Private)
 
 		private enum DataContainer

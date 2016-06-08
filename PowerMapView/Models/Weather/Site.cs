@@ -15,7 +15,6 @@ namespace PowerMapView.Models.Weather
 		}
 		private static Site[] _sites;
 
-
 		#region Data
 
 		[DataMember(Order = 0)]
@@ -40,7 +39,6 @@ namespace PowerMapView.Models.Weather
 		public string PowerCompanyName { get; set; }
 
 		#endregion
-
 
 		#region Load/Save
 

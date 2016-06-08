@@ -52,7 +52,6 @@ namespace PowerMapView.Models
 
 		#endregion
 
-
 		#region Company
 
 		internal static async Task<string> GetPowerDataAsync(string targetUrl)
@@ -69,7 +68,6 @@ namespace PowerMapView.Models
 		}
 
 		#endregion
-
 
 		#region Access
 

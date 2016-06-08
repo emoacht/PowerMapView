@@ -24,7 +24,7 @@ namespace PowerMapView.Models.Weather
 		/// <summary>
 		/// Sys information
 		/// </summary>
-		[DataMember(Name ="sys")]
+		[DataMember(Name = "sys")]
 		public SysInfo Sys { get; set; }
 
 		/// <summary>
@@ -36,50 +36,50 @@ namespace PowerMapView.Models.Weather
 		/// <summary>
 		/// Main information
 		/// </summary>
-		[DataMember(Name="main")]
+		[DataMember(Name = "main")]
 		public MainInfo Main { get; set; }
 
 		/// <summary>
 		/// Wind information
 		/// </summary>
-		[DataMember(Name="wind")]
+		[DataMember(Name = "wind")]
 		public WindInfo Wind { get; set; }
-		
+
 		/// <summary>
 		/// Clouds information
 		/// </summary>
-		[DataMember(Name="clouds")]
+		[DataMember(Name = "clouds")]
 		public CloudsInfo Clouds { get; set; }
 
 		/// <summary>
 		/// Rain information
 		/// </summary>
-		[DataMember(Name="rain")]
+		[DataMember(Name = "rain")]
 		public RainInfo Rain { get; set; }
 
 		/// <summary>
 		/// Snow information
 		/// </summary>
-		[DataMember(Name="snow")]
+		[DataMember(Name = "snow")]
 		public SnowInfo Snow { get; set; }
 
 		/// <summary>
 		/// Data receiving time, unix time, GMT
 		/// </summary>
-		[DataMember(Name="dt")]
+		[DataMember(Name = "dt")]
 		public int DataTime { get; set; }
 
 		/// <summary>
 		/// City identification
 		/// </summary>
-		[DataMember(Name="id")]
+		[DataMember(Name = "id")]
 		public int CityId { get; set; }
 
 		/// <summary>
 		/// City name
 		/// </summary>
-		[DataMember(Name="name")]
-		public string CityName { get; set; }		
+		[DataMember(Name = "name")]
+		public string CityName { get; set; }
 	}
 
 	[DataContract]
@@ -130,7 +130,7 @@ namespace PowerMapView.Models.Weather
 		/// <summary>
 		/// Weather condition id
 		/// </summary>
-		[DataMember(Name="id")]
+		[DataMember(Name = "id")]
 		public int Id { get; set; }
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace PowerMapView.Models.Weather
 		/// <summary>
 		/// Weather condition within the group
 		/// </summary>
-		[DataMember(Name="description")]
+		[DataMember(Name = "description")]
 		public string Description { get; set; }
 
 		/// <summary>

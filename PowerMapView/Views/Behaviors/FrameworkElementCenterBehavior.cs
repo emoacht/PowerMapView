@@ -5,7 +5,7 @@ using Windows.UI.Xaml;
 
 namespace PowerMapView.Views.Behaviors
 {
-	public class FrameworkElementCenterBehavior : DependencyObject, IBehavior 
+	public class FrameworkElementCenterBehavior : DependencyObject, IBehavior
 	{
 		public DependencyObject AssociatedObject { get; private set; }
 

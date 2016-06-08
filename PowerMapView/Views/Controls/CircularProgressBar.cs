@@ -20,7 +20,6 @@ namespace PowerMapView.Views.Controls
 
 		#endregion
 
-
 		#region Property
 
 		public double Radius // Outer radius
@@ -122,7 +121,6 @@ namespace PowerMapView.Views.Controls
 					OnAngleChanged));
 
 		#endregion
-
 
 		protected override void OnApplyTemplate()
 		{

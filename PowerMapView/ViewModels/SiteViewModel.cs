@@ -13,7 +13,6 @@ namespace PowerMapView.ViewModels
 			this.siteIndex = index;
 		}
 
-
 		#region Data
 
 		/// <summary>
@@ -121,7 +120,7 @@ namespace PowerMapView.ViewModels
 						String.Format("最新の使用率 {0:f1}%", PowerCompany.UsagePercentage);
 				}
 
-				return description;					
+				return description;
 			}
 		}
 
