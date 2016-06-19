@@ -1,72 +1,52 @@
 [
-    {
-        "Name": "北海道電力",
-        "Url": "http:\/\/denkiyoho.hepco.co.jp\/data\/juyo_hokkaidou.csv",
-        "Interval": 5,
-        "Longitude": 141.357672,
-        "Latitude": 43.061531
-    },
-    {
-        "Name": "東北電力",
-        "Url": "http:\/\/setsuden.tohoku-epco.co.jp\/common\/demand\/juyo_02_[yyyyMMdd].csv",
-        "Interval": 5,
-        "Longitude": 140.878367,
-        "Latitude": 38.265633
-    },
-    {
-        "Name": "東京電力",
-        "Url": "http:\/\/www.tepco.co.jp\/forecast\/html\/images\/juyo-j.csv",
-        "Interval": 5,
-        "Longitude": 139.75842,
-        "Latitude": 35.670214
-    },
-    {
-        "Name": "北陸電力",
-        "Url": "http:\/\/www.rikuden.co.jp\/denki-yoho\/csv\/juyo_05_[yyyyMMdd].csv",
-        "Interval": 5,
-        "Longitude": 137.215333,
-        "Latitude": 36.702751
-    },
-    {
-        "Name": "中部電力",
-        "Url": "http:\/\/denki-yoho.chuden.jp\/denki_yoho_content_data\/juyo_cepco003.csv",
-        "Interval": 5,
-        "Longitude": 136.913677,
-        "Latitude": 35.169967
-    },
-    {
-        "Name": "関西電力",
-        "Url": "http:\/\/www.kepco.co.jp\/yamasou\/juyo1_kansai.csv",
-        "Interval": 5,
-        "Longitude": 135.492568,
-        "Latitude": 34.692641
-    },
-    {
-        "Name": "中国電力",
-        "Url": "http:\/\/www.energia.co.jp\/jukyuu\/sys\/juyo_07_[yyyyMMdd].csv",
-        "Interval": 5,
-        "Longitude": 132.455922,
-        "Latitude": 34.387803
-    },
-    {
-        "Name": "四国電力",
-        "Url": "http:\/\/www.yonden.co.jp\/denkiyoho\/juyo_shikoku.csv",
-        "Interval": 5,
-        "Longitude": 134.050183,
-        "Latitude": 34.347726
-    },
-    {
-        "Name": "九州電力",
-        "Url": "http:\/\/www.kyuden.co.jp\/power_usages\/csv\/juyo-hourly-[yyyyMMdd].csv",
-        "Interval": 5,
-        "Longitude": 130.404586,
-        "Latitude": 33.583509
-    },
-    {
-        "Name": "沖縄電力",
-        "Url": "http:\/\/www.okiden.co.jp\/denki\/juyo_10_[yyyyMMdd].csv",
-        "Interval": 5,
-        "Longitude": 127.716202,
-        "Latitude": 26.270959
-    }
+  {
+    "Name": "北海道電力",
+    "Longitude": 141.357672,
+    "Latitude": 43.061531
+  },
+  {
+    "Name": "東北電力",
+    "Longitude": 140.878367,
+    "Latitude": 38.265633
+  },
+  {
+    "Name": "東京電力",
+    "Longitude": 139.75842,
+    "Latitude": 35.670214
+  },
+  {
+    "Name": "北陸電力",
+    "Longitude": 137.215333,
+    "Latitude": 36.702751
+  },
+  {
+    "Name": "中部電力",
+    "Longitude": 136.913677,
+    "Latitude": 35.169967
+  },
+  {
+    "Name": "関西電力",
+    "Longitude": 135.492568,
+    "Latitude": 34.692641
+  },
+  {
+    "Name": "中国電力",
+    "Longitude": 132.455922,
+    "Latitude": 34.387803
+  },
+  {
+    "Name": "四国電力",
+    "Longitude": 134.050183,
+    "Latitude": 34.347726
+  },
+  {
+    "Name": "九州電力",
+    "Longitude": 130.404586,
+    "Latitude": 33.583509
+  },
+  {
+    "Name": "沖縄電力",
+    "Longitude": 127.716202,
+    "Latitude": 26.270959
+  }
 ]

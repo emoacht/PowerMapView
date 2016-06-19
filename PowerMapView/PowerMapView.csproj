@@ -116,7 +116,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\BindableBase.cs" />
-    <Compile Include="Helper\DateTimeOffsetExtension.cs" />
     <Compile Include="Models\DataAccess.cs" />
     <Compile Include="Models\FileService.cs" />
     <Compile Include="Models\SettingsService.cs" />
@@ -135,7 +134,7 @@
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Power\PowerCompnay.cs" />
+    <Compile Include="Models\Power\PowerCompany.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
@@ -148,6 +147,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Libraries\PowerMonitor.dll" />
     <Content Include="Models\Power\PowerCompanies.json" />
     <Content Include="Models\Weather\Sites.json" />
     <None Include="packages.config" />
@@ -183,6 +183,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PowerMonitor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\PowerMonitor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive.Core">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\windows8\System.Reactive.Core.dll</HintPath>
     </Reference>

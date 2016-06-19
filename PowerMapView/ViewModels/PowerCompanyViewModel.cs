@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-using PowerMapView.Helper;
-
 namespace PowerMapView.ViewModels
 {
 	public class PowerCompanyViewModel : ViewModelBase
@@ -17,225 +15,106 @@ namespace PowerMapView.ViewModels
 			get { return _companyCollection ?? (_companyCollection = new List<PowerCompanyViewModel>()); }
 		}
 		private static List<PowerCompanyViewModel> _companyCollection;
-		
-		private readonly int companyIndex;
+
+		private readonly PowerCompany _companyLocation;
+		private readonly PowerMonitor.PowerCompany _companyData;
 
 		public PowerCompanyViewModel(int index)
 		{
-			this.companyIndex = index;
+			if ((index < 0)
+				|| (PowerCompany.Companies.Count <= index)
+				|| (PowerMonitor.PowerCompany.Companies.Count <= index))
+				throw new ArgumentOutOfRangeException(nameof(index));
+
+			_companyLocation = PowerCompany.Companies[index];
+			_companyData = PowerMonitor.PowerCompany.Companies[index];
+
+			if (!string.Equals(_companyLocation.Name, _companyData.Name, StringComparison.Ordinal))
+				throw new InvalidOperationException();
 		}
-		
+
 		#region Data
 
 		/// <summary>
 		/// Power company name
 		/// </summary>
-		public string Name
-		{
-			get { return PowerCompany.Companies[companyIndex].Name; }
-		}
+		public string Name => _companyLocation.Name;
 
 		/// <summary>
-		/// Today's peak supply
+		/// Longitude of power company's head office
+		/// </summary>
+		public double Longitude => _companyLocation.Longitude;
+
+		/// <summary>
+		/// Latitude of power company's head office
+		/// </summary>
+		public double Latitude => _companyLocation.Latitude;
+
+		/// <summary>
+		/// Supply capacity during peak hours of current date
 		/// </summary>
 		public double PeakSupply
 		{
 			get { return _peakSupply; }
-			set
-			{
-				_peakSupply = value;
-				RaisePropertyChanged();
-			}
+			private set { SetProperty(ref _peakSupply, value); }
 		}
 		private double _peakSupply;
 
 		/// <summary>
-		/// Latest usage amount
+		/// The latest usage amount
 		/// </summary>
 		public double UsageAmount
 		{
 			get { return _usageAmount; }
-			set
-			{
-				_usageAmount = value;
-				RaisePropertyChanged();
-
-				if (0 < PeakSupply)
-					UsagePercentage = value / PeakSupply * 100;
-			}
+			private set { SetProperty(ref _usageAmount, value); }
 		}
 		private double _usageAmount;
 
 		/// <summary>
-		/// Latest usage percentage
+		/// The latest usage percentage
 		/// </summary>
 		public double UsagePercentage
 		{
 			get { return _usagePercentage; }
-			private set
-			{
-				_usagePercentage = value;
-				RaisePropertyChanged();
-			}
+			private set { SetProperty(ref _usagePercentage, value); }
 		}
 		private double _usagePercentage;
-		
+
 		/// <summary>
-		/// Data time of latest usage amount
+		/// Time when the latest usage amount is recorded
 		/// </summary>
 		public DateTimeOffset DataTime
 		{
 			get { return _dataTime; }
-			set
-			{
-				_dataTime = value;
-				RaisePropertyChanged();
-			}
+			private set { SetProperty(ref _dataTime, value); }
 		}
 		private DateTimeOffset _dataTime;
 
 		#endregion
-		
+
 		#region Update
 
 		/// <summary>
-		/// Index number of header row for today's peak supply
+		/// Last check time
 		/// </summary>
-		/// <remarks>Default value means not checked yet or does not exist.</remarks>
-		private int PeakSupplyHeaderIndex = -1;
+		public DateTimeOffset CheckTimeLast => _companyData.CheckTime;
 
 		/// <summary>
-		/// Index number of header row of actual usage raws
+		/// Next check time
 		/// </summary>
-		/// <remarks>Default value means not checked yet or does not exist.</remarks>
-		private int ActualUsageHeaderIndex = -1;
-
-		/// <summary>
-		/// Starting part of header row of today's peak supply
-		/// </summary>
-		private const string PeakSupplyHeaderStart = "ピーク時供給力";
-
-		/// <summary>
-		/// Starting part of header row of actual usage rows (This must be searched from last)
-		/// </summary>
-		private const string ActualUsageHeaderStart = "DATE,TIME,当日実績";
-
-		/// <summary>
-		/// Last update time (Not UPDATE time in csv file)
-		/// </summary>
-		public DateTime UpdateTimeLast
-		{
-			get { return _updateTimeLast; }
-			private set
-			{
-				if (_updateTimeLast == value)
-					return;
-
-				_updateTimeLast = value;
-				UpdateTimeNext = GetInterval(value);
-			}
-		}
-		private DateTime _updateTimeLast;
-
-		/// <summary>
-		/// Next update time
-		/// </summary>
-		public DateTime UpdateTimeNext { get; private set; }
-
-		private int failureCount;
-		private const int failureCountLimit = 3;
-
-		private int nodataCount;
-		private const int nodataCountLimit = 20;
-
-		private DateTime GetInterval(DateTime baseTime)
-		{
-			if ((failureCount < failureCountLimit) && (nodataCount < nodataCountLimit))
-				return baseTime.AddMinutes(PowerCompany.Companies[companyIndex].Interval / 2);
-
-			var oneHourLater = baseTime.AddHours(1);
-			var tomorrowMidnight = baseTime.Date.AddDays(1);
-
-			return (oneHourLater < tomorrowMidnight) ? oneHourLater : tomorrowMidnight;
-		}
+		public DateTimeOffset CheckTimeNext => CheckTimeLast.AddMinutes((double)_companyData.Interval / 2D);
 
 		public async Task UpdateAsync()
 		{
-			var targetUrl = PowerCompany.Companies[companyIndex].Url.Replace("[yyyyMMdd]", DateTimeOffset.Now.ToJst().ToString("yyyyMMdd"));
-			var csv = await DataAccess.GetPowerDataAsync(targetUrl);
-
-			UpdateTimeLast = DateTime.Now;
-
-			if (string.IsNullOrEmpty(csv))
-			{
-				failureCount++;
+			if (!await _companyData.CheckAsync())
 				return;
-			}
-			failureCount = 0;
 
-			var records = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-			
-			if ((PeakSupplyHeaderIndex < 0) ||
-				(ActualUsageHeaderIndex < 0))
-			{
-				var peakSupplyHeaderIndex = records.FindIndex(x => x.StartsWith(PeakSupplyHeaderStart));
-				var actualUsageHeaderIndex = records.FindLastIndex(x => x.StartsWith(ActualUsageHeaderStart)); // Search from last
+			PeakSupply = _companyData.Data.PeakSupply;
+			UsageAmount = _companyData.Data.UsageAmount;
+			UsagePercentage = _companyData.Data.UsagePercentage;
+			DataTime = _companyData.Data.DataTime;
 
-				if ((peakSupplyHeaderIndex < 0) || (actualUsageHeaderIndex < 0))
-					return;
-
-				PeakSupplyHeaderIndex = peakSupplyHeaderIndex;
-				ActualUsageHeaderIndex = actualUsageHeaderIndex;
-			}
-
-			// Find peak supply.
-			var supplyFields = records[PeakSupplyHeaderIndex + 1].Split(',');
-			if (supplyFields.Length > 0)
-			{
-				double supplyBuff;
-				if (double.TryParse(supplyFields[0], out supplyBuff))
-					PeakSupply = Math.Round(supplyBuff);
-			}
-
-			// Find usage amount and data time.
-			nodataCount++;
-			var currentDate = DateTimeOffset.Now.ToJst().Date;
-
-			foreach (var usageRecord in records.Skip(ActualUsageHeaderIndex + 1))
-			{
-				if (string.IsNullOrWhiteSpace(usageRecord))
-					break;
-
-				var usageFields = usageRecord.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				if (usageFields.Length < 3)
-					break;
-
-				// Find data time.
-				DateTimeOffset dataTimeBuff;
-				if (DateTimeOffset.TryParse(string.Format("{0} {1}", usageFields[0], usageFields[1]), out dataTimeBuff))
-				{
-					dataTimeBuff = dataTimeBuff.ToJst();
-
-					// Check if data date is today.
-					if (dataTimeBuff.Date != currentDate)
-						break;
-
-					DataTime = dataTimeBuff;
-				}
-
-				// Find usage amount.
-				double usageBuff;
-				if (double.TryParse(usageFields[2], out usageBuff))
-				{
-					if (usageBuff <= 0)
-						break;
-
-					nodataCount = 0;
-					UsageAmount = usageBuff;
-				}
-			}
-
-			Debug.WriteLine("{0}: {1}, {2}, {3:f1}", Name, PeakSupply, UsageAmount, UsagePercentage);
+			Debug.WriteLine($"{Name}: {UsageAmount} ({DataTime:HH:mm}) / {PeakSupply} -> {UsagePercentage:f1}%");
 		}
 
 		#endregion

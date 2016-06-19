@@ -157,7 +157,7 @@ namespace PowerMapView.ViewModels
 				return;
 
 			var updateTasks = PowerCompanyViewModel.CompanyCollection
-				.Where(x => x.UpdateTimeNext <= DateTime.Now)
+				.Where(x => x.CheckTimeNext <= DateTime.Now)
 				.Select(async x => await x.UpdateAsync());
 
 			await Task.WhenAll(updateTasks);
