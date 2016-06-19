@@ -32,7 +32,7 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to parse json.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to parse json.\r\n{ex}");
 				throw;
 			}
 		}

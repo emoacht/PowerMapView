@@ -9,10 +9,7 @@ namespace PowerMapView.Models.Weather
 	[DataContract]
 	public class Site
 	{
-		internal static IReadOnlyList<Site> Sites
-		{
-			get { return _sites; }
-		}
+		internal static IReadOnlyList<Site> Sites => _sites;
 		private static Site[] _sites;
 
 		#region Data
@@ -53,7 +50,7 @@ namespace PowerMapView.Models.Weather
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to load power companies file.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to load power companies file.\r\n{ex}");
 			}
 		}
 

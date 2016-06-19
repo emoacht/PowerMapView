@@ -19,7 +19,7 @@ namespace PowerMapView.Models.Power
 		/// </summary>
 		[DataMember(Order = 0)]
 		public string Name { get; set; }
-		
+
 		/// <summary>
 		/// Longitude of power company's head office
 		/// </summary>
@@ -47,7 +47,7 @@ namespace PowerMapView.Models.Power
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to load power companies file.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to load power companies file.\r\n{ex}");
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace PowerMapView.Models.Power
 					Name = "東京電力",
 					Longitude = 139.758420,
 					Latitude = 35.670214,
-				},			
+				},
 				new PowerCompany()
 				{
 					Name = "北陸電力",

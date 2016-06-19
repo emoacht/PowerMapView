@@ -64,7 +64,7 @@ namespace PowerMapView.Views
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to handle canvas item tapped event and show flyout.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to handle canvas item tapped event and show flyout.\r\n{ex}");
 			}
 		}
 

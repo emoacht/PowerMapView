@@ -1,13 +1,15 @@
-﻿using PowerMapView.Models.Weather;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
+
+using PowerMapView.Models.Weather;
 
 namespace PowerMapView.Models
 {
@@ -19,9 +21,9 @@ namespace PowerMapView.Models
 
 		internal static async Task<WeatherData[]> GetWeatherDataAsync(int[] ids)
 		{
-			var requestUrl = weatherDataEndPoint + String.Join(",", ids);
+			var requestUrl = weatherDataEndPoint + string.Join(",", ids);
 
-			string json = String.Empty;
+			string json = string.Empty;
 
 			try
 			{
@@ -29,24 +31,22 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to get json from weather map.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to get json from weather map.\r\n{ex}");
 			}
 
-			if (String.IsNullOrEmpty(json))
+			if (string.IsNullOrEmpty(json))
 				return null;
 
-			using (var ms = new System.IO.MemoryStream())
-			using (var sw = new System.IO.StreamWriter(ms))
+			using (var ms = new MemoryStream())
+			using (var sw = new StreamWriter(ms))
 			{
-				sw.Write(json);
-				sw.Flush();
-
+				await sw.WriteAsync(json);
+				await sw.FlushAsync();
 				ms.Seek(0, SeekOrigin.Begin);
 
-				var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(WeatherDataGroup));
-				var group = (WeatherDataGroup)serializer.ReadObject(ms);
-
-				return (group != null) ? group.Data : null;
+				var serializer = new DataContractJsonSerializer(typeof(WeatherDataGroup));
+				var group = serializer.ReadObject(ms) as WeatherDataGroup;
+				return group?.Data;
 			}
 		}
 
@@ -62,8 +62,8 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to get csv from power company.\r\n{0}", ex);
-				return String.Empty;
+				Debug.WriteLine($"Failed to get csv from power company.\r\n{ex}");
+				return string.Empty;
 			}
 		}
 
@@ -77,8 +77,8 @@ namespace PowerMapView.Models
 
 		private static async Task<string> GetStringAsync(string targetUrl, string encodingName = "utf-8")
 		{
-			if (String.IsNullOrWhiteSpace(targetUrl))
-				throw new ArgumentNullException("targetUrl");
+			if (string.IsNullOrWhiteSpace(targetUrl))
+				throw new ArgumentNullException(nameof(targetUrl));
 
 			Uri targetUri;
 			if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out targetUri))
@@ -90,9 +90,9 @@ namespace PowerMapView.Models
 		private static async Task<string> GetStringAsync(Uri targetUri, string encordingName = "utf-8")
 		{
 			if (targetUri == null)
-				throw new ArgumentNullException("targetUri");
-			if (String.IsNullOrWhiteSpace(encordingName))
-				throw new ArgumentNullException("encordingName");
+				throw new ArgumentNullException(nameof(targetUri));
+			if (string.IsNullOrWhiteSpace(encordingName))
+				throw new ArgumentNullException(nameof(encordingName));
 
 			int retryCount = 0;
 

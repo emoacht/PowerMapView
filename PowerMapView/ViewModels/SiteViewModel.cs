@@ -1,16 +1,21 @@
-﻿using PowerMapView.Models.Weather;
-using System;
+﻿using System;
+using System.Linq;
+using System.Text;
+
+using PowerMapView.Models.Weather;
 
 namespace PowerMapView.ViewModels
 {
 	public class SiteViewModel : CanvasItemViewModel
 	{
-		private readonly int siteIndex;
-		private int companyIndex = -1;
+		private readonly Site _site;
 
 		public SiteViewModel(int index)
 		{
-			this.siteIndex = index;
+			if ((index < 0) || (Site.Sites.Count <= index))
+				throw new ArgumentOutOfRangeException(nameof(index));
+
+			_site = Site.Sites[index];
 		}
 
 		#region Data
@@ -18,55 +23,40 @@ namespace PowerMapView.ViewModels
 		/// <summary>
 		/// City identification for OpenWeatherMap
 		/// </summary>
-		public int Id
-		{
-			get { return Site.Sites[siteIndex].Id; }
-		}
+		public int Id => _site.Id;
 
 		/// <summary>
 		/// City name
 		/// </summary>
-		public string Name
-		{
-			get { return Site.Sites[siteIndex].NameJa; }
-		}
+		public string Name => _site.NameJa;
 
 		/// <summary>
 		/// Power company name for this city
 		/// </summary>
-		public string PowerCompanyName
-		{
-			get { return Site.Sites[siteIndex].PowerCompanyName; }
-		}
+		public string PowerCompanyName => _site.PowerCompanyName;
 
 		public PowerCompanyViewModel PowerCompany
 		{
 			get
 			{
-				if (companyIndex < 0)
-				{
-					companyIndex = PowerCompanyViewModel.CompanyCollection.FindIndex(x => x.Name == PowerCompanyName);
+				if (_powerCompany == null)
+					_powerCompany = MainPageViewModel.CompanyCollection.First(x => string.Equals(x.Name, _site.PowerCompanyName, StringComparison.Ordinal));
 
-					if (companyIndex < 0)
-						return null; // Do not make this happen when binding. Otherwise, binding will not be made.
-				}
-
-				return PowerCompanyViewModel.CompanyCollection[companyIndex];
+				return _powerCompany;
 			}
 		}
+		private PowerCompanyViewModel _powerCompany;
 
 		/// <summary>
 		/// Temperature in Kelvin
 		/// </summary>
 		public double TempKelvin
 		{
-			get { return _tempKelvin.HasValue ? _tempKelvin.Value : 0; }
+			get { return _tempKelvin.GetValueOrDefault(); }
 			set
 			{
-				_tempKelvin = value;
-				RaisePropertyChanged();
-
-				TempCelsius = Math.Round((value - 273.15) * 10) / 10;
+				if (SetProperty(ref _tempKelvin, value))
+					TempCelsius = Math.Round((value - 273.15) * 10D) / 10D;
 			}
 		}
 		private double? _tempKelvin;
@@ -76,12 +66,11 @@ namespace PowerMapView.ViewModels
 		/// </summary>
 		public double TempCelsius
 		{
-			get { return _tempCelsius.HasValue ? _tempCelsius.Value : 0; }
+			get { return _tempCelsius.GetValueOrDefault(); }
 			set
 			{
-				_tempCelsius = value;
-				RaisePropertyChanged();
-				RaisePropertyChanged(() => Description);
+				if (SetProperty(ref _tempCelsius, value))
+					RaisePropertyChanged(nameof(Description));
 			}
 		}
 		private double? _tempCelsius;
@@ -91,12 +80,11 @@ namespace PowerMapView.ViewModels
 		/// </summary>
 		public double Humidity
 		{
-			get { return _humidity.HasValue ? _humidity.Value : 0; }
+			get { return _humidity.GetValueOrDefault(); }
 			set
 			{
-				_humidity = value;
-				RaisePropertyChanged();
-				RaisePropertyChanged(() => Description);
+				if (SetProperty(ref _humidity, value))
+					RaisePropertyChanged(nameof(Description));
 			}
 		}
 		private double? _humidity;
@@ -108,19 +96,20 @@ namespace PowerMapView.ViewModels
 				if (!_tempCelsius.HasValue || !_humidity.HasValue)
 					return null;
 
-				var description = String.Format("気温 {0}C", TempCelsius) + Environment.NewLine +
-					String.Format("湿度 {0}%", Humidity) + Environment.NewLine +
-					String.Format("{0}管内", PowerCompanyName);
+				var sb = new StringBuilder();
+				sb.AppendLine($"気温 {TempCelsius}C");
+				sb.AppendLine($"湿度 {Humidity}%");
+				sb.Append($"{PowerCompanyName}管内");
 
 				if ((PowerCompany != null) && (0 < PowerCompany.UsageAmount))
 				{
-					description += Environment.NewLine +
-						String.Format("ピーク供給力 {0}万kW", PowerCompany.PeakSupply) + Environment.NewLine +
-						String.Format("最新の使用量 {0}万kW", PowerCompany.UsageAmount) + Environment.NewLine +
-						String.Format("最新の使用率 {0:f1}%", PowerCompany.UsagePercentage);
+					sb.AppendLine();
+					sb.AppendLine($"ピーク供給力 {PowerCompany.PeakSupply}万kW");
+					sb.AppendLine($"最新の使用量 {PowerCompany.UsageAmount}万kW");
+					sb.Append($"最新の使用率 {PowerCompany.UsagePercentage:f1}%");
 				}
 
-				return description;
+				return sb.ToString();
 			}
 		}
 

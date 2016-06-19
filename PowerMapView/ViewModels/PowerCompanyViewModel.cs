@@ -1,21 +1,15 @@
-﻿using PowerMapView.Models;
-using PowerMapView.Models.Power;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+
+using PowerMapView.Models.Power;
 
 namespace PowerMapView.ViewModels
 {
 	public class PowerCompanyViewModel : ViewModelBase
 	{
-		public static List<PowerCompanyViewModel> CompanyCollection
-		{
-			get { return _companyCollection ?? (_companyCollection = new List<PowerCompanyViewModel>()); }
-		}
-		private static List<PowerCompanyViewModel> _companyCollection;
-
 		private readonly PowerCompany _companyLocation;
 		private readonly PowerMonitor.PowerCompany _companyData;
 

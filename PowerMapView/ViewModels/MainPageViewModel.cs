@@ -18,11 +18,8 @@ namespace PowerMapView.ViewModels
 {
 	public class MainPageViewModel : ViewModelBase
 	{
-		public ObservableCollection<SiteViewModel> SiteCollection
-		{
-			get { return _siteCollection ?? (_siteCollection = new ObservableCollection<SiteViewModel>()); }
-		}
-		private ObservableCollection<SiteViewModel> _siteCollection;
+		public static List<PowerCompanyViewModel> CompanyCollection { get; } = new List<PowerCompanyViewModel>();
+		public ObservableCollection<SiteViewModel> SiteCollection { get; } = new ObservableCollection<SiteViewModel>();
 
 		public MainPageViewModel()
 		{
@@ -37,7 +34,7 @@ namespace PowerMapView.ViewModels
 			var startTasks = new Task[]
 			{
 				StartCompanyUpdateAsync(),
-				StartSiteUpdateAsync(),				
+				StartSiteUpdateAsync(),
 			};
 
 			await Task.WhenAll(startTasks);
@@ -49,26 +46,20 @@ namespace PowerMapView.ViewModels
 
 			await PowerCompany.LoadFromApplicationUriAsync();
 
-			int companyIndex = 0;
-			foreach (var company in PowerCompany.Companies)
-			{
-				PowerCompanyViewModel.CompanyCollection.Add(new PowerCompanyViewModel(companyIndex++));
-			}
+			foreach (var company in Enumerable.Range(0, PowerCompany.Companies.Count).Select(index => new PowerCompanyViewModel(index)))
+				CompanyCollection.Add(company);
 
 			await Site.LoadFromApplicationUriAsync();
 
 			CheckAreaCoordinates(Site.Sites, MainViewerSize);
 
-			RaisePropertyChanged(() => MainViewerZoomFactor);
-			RaisePropertyChanged(() => MainCanvasCenterPosition);
+			RaisePropertyChanged(nameof(MainViewerZoomFactor));
+			RaisePropertyChanged(nameof(MainCanvasCenterPosition));
 
-			int siteIndex = 0;
-			foreach (var site in Site.Sites)
-			{
-				SiteCollection.Add(new SiteViewModel(siteIndex++) { Location = ConvertPositionFromReal(site.Longitude, site.Latitude) });
-			}
+			foreach (var site in Site.Sites.Select((x, index) => new SiteViewModel(index) { Location = ConvertPositionFromReal(x.Longitude, x.Latitude) }))
+				SiteCollection.Add(site);
 
-			// Wait for all railway members being loaded. Otherwise, subsequent restoring position 
+			// Wait for all site members being loaded. Otherwise, subsequent restoring position 
 			// may not work correctly.
 			while (SiteCollection.Any(x => !x.IsLoaded))
 			{
@@ -80,20 +71,20 @@ namespace PowerMapView.ViewModels
 
 		#region Site
 
-		private readonly DispatcherTimer SiteUpdateTimer = new DispatcherTimer();
+		private readonly DispatcherTimer _siteUpdateTimer = new DispatcherTimer();
 
 		private async Task StartSiteUpdateAsync()
 		{
 			await SiteUpdateAsync();
 
-			CompanyUpdateTimer.Interval = TimeSpan.FromMinutes(10); // 10 min
-			CompanyUpdateTimer.Tick += async (sender, e) =>
+			_siteUpdateTimer.Interval = TimeSpan.FromMinutes(10); // 10 min
+			_siteUpdateTimer.Tick += async (sender, e) =>
 			{
-				CompanyUpdateTimer.Stop();
+				_siteUpdateTimer.Stop();
 				await SiteUpdateAsync();
-				CompanyUpdateTimer.Start();
+				_siteUpdateTimer.Start();
 			};
-			CompanyUpdateTimer.Start();
+			_siteUpdateTimer.Start();
 		}
 
 		private async Task SiteUpdateAsync()
@@ -135,20 +126,20 @@ namespace PowerMapView.ViewModels
 
 		#region Company
 
-		private readonly DispatcherTimer CompanyUpdateTimer = new DispatcherTimer();
+		private readonly DispatcherTimer _companyUpdateTimer = new DispatcherTimer();
 
 		private async Task StartCompanyUpdateAsync()
 		{
 			await CompanyUpdateAsync();
 
-			CompanyUpdateTimer.Interval = TimeSpan.FromSeconds(10); // 10 sec
-			CompanyUpdateTimer.Tick += async (sender, e) =>
+			_companyUpdateTimer.Interval = TimeSpan.FromSeconds(10); // 10 sec
+			_companyUpdateTimer.Tick += async (sender, e) =>
 			{
-				CompanyUpdateTimer.Stop();
+				_companyUpdateTimer.Stop();
 				await CompanyUpdateAsync();
-				CompanyUpdateTimer.Start();
+				_companyUpdateTimer.Start();
 			};
-			CompanyUpdateTimer.Start();
+			_companyUpdateTimer.Start();
 		}
 
 		private async Task CompanyUpdateAsync()
@@ -156,7 +147,7 @@ namespace PowerMapView.ViewModels
 			if (!IsConnectionAvailable)
 				return;
 
-			var updateTasks = PowerCompanyViewModel.CompanyCollection
+			var updateTasks = CompanyCollection
 				.Where(x => x.CheckTimeNext <= DateTime.Now)
 				.Select(async x => await x.UpdateAsync());
 

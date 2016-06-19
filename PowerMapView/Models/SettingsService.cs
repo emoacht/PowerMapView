@@ -53,7 +53,7 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to get property value.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to get property value.\r\n{ex}");
 				return default(T);
 			}
 		}
@@ -79,7 +79,7 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to try to get property value.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to try to get property value.\r\n{ex}");
 				propertyValue = default(T);
 				return false;
 			}
@@ -104,7 +104,7 @@ namespace PowerMapView.Models
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to set property value.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to set property value.\r\n{ex}");
 			}
 		}
 

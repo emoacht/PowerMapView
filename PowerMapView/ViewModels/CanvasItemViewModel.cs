@@ -7,33 +7,21 @@ namespace PowerMapView.ViewModels
 		public double Left
 		{
 			get { return _left; }
-			set
-			{
-				_left = value;
-				RaisePropertyChanged();
-			}
+			set { SetProperty(ref _left, value); }
 		}
 		private double _left;
 
 		public double Top
 		{
 			get { return _top; }
-			set
-			{
-				_top = value;
-				RaisePropertyChanged();
-			}
+			set { SetProperty(ref _top, value); }
 		}
 		private double _top;
 
 		public int ZIndex
 		{
 			get { return _zIndex; }
-			set
-			{
-				_zIndex = value;
-				RaisePropertyChanged();
-			}
+			set { SetProperty(ref _zIndex, value); }
 		}
 		private int _zIndex = 0;
 

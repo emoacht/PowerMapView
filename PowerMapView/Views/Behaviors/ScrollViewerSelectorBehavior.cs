@@ -157,7 +157,7 @@ namespace PowerMapView.Views.Behaviors
 
 			isInitial = false;
 
-			Debug.WriteLine("Restored center position and zoom factor. {0}", InSelectorCenterPosition);
+			Debug.WriteLine($"Restored center position and zoom factor. {InSelectorCenterPosition}");
 		}
 
 		private void RestoreInViewerPosition(Point inViewerPosition, Point inSelectorPosition, float viewerZoomFactor, bool checkesItemInViewport = false)
@@ -186,7 +186,7 @@ namespace PowerMapView.Views.Behaviors
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to restore position and zoom factor.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to restore position and zoom factor.\r\n{ex}");
 			}
 		}
 
@@ -198,7 +198,7 @@ namespace PowerMapView.Views.Behaviors
 
 			ViewerZoomFactor = AssociatedViewer.ZoomFactor;
 
-			Debug.WriteLine("Saved center position and zoom factor. {0}", InSelectorCenterPosition);
+			Debug.WriteLine($"Saved center position and zoom factor. {InSelectorCenterPosition}");
 		}
 
 		private Point ConvertToInSelectorPosition(Point inViewerPosition, float viewerZoomFactor)
@@ -259,7 +259,7 @@ namespace PowerMapView.Views.Behaviors
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to handle zoom tapped event.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to handle zoom tapped event.\r\n{ex}");
 			}
 		}
 
@@ -271,7 +271,7 @@ namespace PowerMapView.Views.Behaviors
 
 			RestoreInViewerPosition(inViewerPosition, inSelectorPosition, factor);
 
-			Debug.WriteLine("Zoomed in: Factor:{0} InViewerPosition: {1} inSelectorPosition: {2}", factor, inViewerPosition, inSelectorPosition);
+			Debug.WriteLine($"Zoomed in: Factor:{factor} InViewerPosition: {inViewerPosition} inSelectorPosition: {inSelectorPosition}");
 		}
 
 		private void ZoomOut(Point inViewerPosition, Point inSelectorPosition)
@@ -280,7 +280,7 @@ namespace PowerMapView.Views.Behaviors
 
 			RestoreInViewerPosition(inViewerPosition, inSelectorPosition, factor);
 
-			Debug.WriteLine("Zoomed in: Factor:{0} InViewerPosition: {1} InSelectorPosition: {2}", factor, inViewerPosition, inSelectorPosition);
+			Debug.WriteLine($"Zoomed in: Factor:{factor} InViewerPosition: {inViewerPosition} InSelectorPosition: {inSelectorPosition}");
 		}
 
 		#endregion
@@ -333,7 +333,7 @@ namespace PowerMapView.Views.Behaviors
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to handle manipulation started event.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to handle manipulation started event.\r\n{ex}");
 			}
 		}
 
@@ -367,7 +367,7 @@ namespace PowerMapView.Views.Behaviors
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to reflect changes of ManipulationDalta.\r\n{0}", ex);
+				Debug.WriteLine($"Failed to reflect changes of ManipulationDalta.\r\n{ex}");
 			}
 		}
 
